@@ -34,6 +34,11 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 ### Reviewed, no change
 Lead `sourceDetail` lengths (max 83 of 200), CSP, external links, old-URL redirects, announcement hydration.
 
+### Follow-up (same day)
+- Australia S1 2027 news post has a cover photo: `public/images/latest/australia-sydney-harbour.jpg` (Sydney Harbour,
+  Unsplash photo-1506973035872, Unsplash licence: free use, no credit needed), cropped so the Opera House stays in
+  the home-page card.
+
 ### Open for the owner
 - Thank-you page says "A confirmation is on its way on WhatsApp": the CRM only logs WhatsApp in its demo setup.
   Confirm WhatsApp sending is configured in production, or soften the line.

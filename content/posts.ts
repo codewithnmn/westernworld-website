@@ -31,6 +31,8 @@ const POSTS: Post[] = [
     title: "Australia Semester 1, 2027 intake is now open",
     excerpt: "Universities in Australia are accepting applications for the February / March 2027 intake. Here is how to get your application in on time.",
     date: "2026-10-05",
+    // Sydney Harbour, Unsplash photo-1506973035872 (Unsplash licence: free to use, no credit required).
+    image: "/images/latest/australia-sydney-harbour.jpg",
     body: [
       "Applications for the Semester 1, 2027 intake at Australian universities (classes usually starting February or March 2027) are now open.",
       "Deadlines differ by university and course, and popular courses can close early or fill up before the official date, so it pays to apply early.",
