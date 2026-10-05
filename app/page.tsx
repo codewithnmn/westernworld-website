@@ -287,7 +287,7 @@ export default function Home() {
             <h3 className="text-3xl font-semibold">IELTS General packages</h3>
             <Link href="/online-courses" className="tag inline-flex items-center gap-1 text-accent hover:underline">Online course fees <ArrowUpRight className="size-3.5" /></Link>
           </div>
-          <Packages packages={HOME_PACKAGES} source="Home packages" />
+          <Packages packages={HOME_PACKAGES} />
         </div>
       </Section>
 

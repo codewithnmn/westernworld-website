@@ -3,12 +3,20 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { ArrowRight, Plane } from "lucide-react";
+import { FieldError, invalid, useFormChecks } from "@/components/FormChecks";
 import { Turnstile } from "@/components/Turnstile";
-import { submitEnquiry } from "@/lib/enquiry";
+import { submitEnquiry, thankYouQuery } from "@/lib/enquiry";
+import { checkEmail, checkName, checkPhone, normalisePhone, serverFieldErrors, tidy } from "@/lib/validation";
 import { DESTINATIONS } from "@/lib/site";
 
 const WHEN = ["Within 6 months", "In 6–12 months", "In more than a year", "Not sure yet"];
 const TEST = ["Not taken yet", "Preparing now", "Have my score", "Need coaching"];
+
+const CHECKS = {
+  name: (v: string) => (tidy(v) ? checkName(v) : "Every boarding pass needs a passenger name. Yours, please ✈️"),
+  mobile: checkPhone,
+  email: (v: string) => checkEmail(v, false),
+};
 
 /**
  * The home-page counselling form, styled as a boarding pass. It asks the three things a counsellor needs first
@@ -21,17 +29,19 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
   const dest = DESTINATIONS.find((d) => d.slug === to);
+  const checks = useFormChecks(CHECKS);
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    if (!checks.validate(e.currentTarget)) return;
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     setBusy(true);
-    setError("");
     try {
       await submitEnquiry({
-        fullName: f.name,
-        phone: f.mobile,
-        email: f.email || undefined,
+        fullName: tidy(f.name),
+        phone: normalisePhone(f.mobile) ?? f.mobile,
+        email: f.email.trim().toLowerCase() || undefined,
         serviceInterest: "Free counselling",
         preferredCountry: dest?.name,
         message: [`Destination: ${dest?.name ?? "Not decided"}`, `Planning to go: ${f.when}`, `English test: ${f.test}`].join("\n"),
@@ -39,9 +49,12 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
         website: f.website || undefined,
         captchaToken: f["cf-turnstile-response"] || undefined,
       });
-      router.push(`/thank-you?${new URLSearchParams({ name: f.name.split(" ")[0] })}`);
+      router.push(`/thank-you?${thankYouQuery(tidy(f.name), f.email)}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      const message = err instanceof Error ? err.message : String(err);
+      const { fields: bad, rest } = serverFieldErrors(message);
+      bad.forEach((b) => checks.setError(b.field, b.message));
+      if (rest) setError(rest);
       setAttempt((n) => n + 1);
       setBusy(false);
     }
@@ -51,7 +64,7 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
   const label = "tag block text-slate-400";
 
   return (
-    <form onSubmit={submit} className="relative overflow-hidden rounded-2xl bg-white shadow-[0_30px_80px_-20px_rgb(14_22_69/0.35)] ring-1 ring-line">
+    <form onSubmit={submit} noValidate className="relative overflow-hidden rounded-2xl bg-white shadow-[0_30px_80px_-20px_rgb(14_22_69/0.35)] ring-1 ring-line">
       <div className="flex items-center justify-between bg-ink px-5 py-3 text-white">
         <p className="tag">Boarding pass · Free counselling</p>
         <Plane className="size-4 rotate-45 text-sun" />
@@ -83,13 +96,19 @@ export default function BoardingPass({ source = "Boarding pass (home)" }: { sour
 
         <div className="mt-6 grid gap-x-5 gap-y-4 sm:grid-cols-2">
           <label className="sm:col-span-2"><span className={label}>Passenger name *</span>
-            <input name="name" required maxLength={200} autoComplete="name" placeholder="Your full name" className={field} />
+            <input {...checks.field("name")} required maxLength={200} autoComplete="name" placeholder="Your full name"
+                   className={`${field} ${invalid(!!checks.errors.name)}`} />
+            <FieldError {...checks.error("name")} />
           </label>
           <label><span className={label}>Mobile *</span>
-            <input name="mobile" type="tel" required maxLength={20} autoComplete="tel" placeholder="98765 43210" className={field} />
+            <input {...checks.field("mobile")} type="tel" inputMode="tel" required maxLength={20} autoComplete="tel" placeholder="98765 43210"
+                   className={`${field} ${invalid(!!checks.errors.mobile)}`} />
+            <FieldError {...checks.error("mobile")} />
           </label>
           <label><span className={label}>Email</span>
-            <input name="email" type="email" maxLength={200} autoComplete="email" placeholder="Optional" className={field} />
+            <input {...checks.field("email")} type="email" maxLength={200} autoComplete="email" placeholder="Optional"
+                   className={`${field} ${invalid(!!checks.errors.email)}`} />
+            <FieldError {...checks.error("email")} />
           </label>
           <label><span className={label}>Planning to fly</span>
             <select name="when" className={field} defaultValue={WHEN[0]}>{WHEN.map((w) => <option key={w}>{w}</option>)}</select>

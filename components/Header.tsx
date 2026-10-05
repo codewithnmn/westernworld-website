@@ -16,6 +16,13 @@ export default function Header() {
   // Dropdowns open on hover/focus (CSS). After a click the page changes without a reload, so the pointer and focus are
   // still on the menu: keep it closed until the pointer leaves.
   const [closed, setClosed] = useState<string | null>(null);
+  // Close the mobile menu whenever the page changes, including Back/Forward (links close it themselves).
+  const [shownPath, setShownPath] = useState(path);
+  if (path !== shownPath) {
+    setShownPath(path);
+    setOpen(false);
+    setExpanded(null);
+  }
   const active = (item: NavItem) =>
     path === item.href || (item.href !== "/" && path.startsWith(item.href)) || !!item.children?.some((c) => path === c.href);
 

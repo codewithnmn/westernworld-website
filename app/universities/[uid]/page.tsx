@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: PageProps<"/universities/[uid
 }
 
 /** The old site's shared checklist had typos ("Graducation", "Addhar"); shown corrected. */
-const tidy = (s: string) => s.replace("Graducation", "Graduation").replace("Addhar", "Aadhaar").replace("10th & 12th", "10th & 12th");
+const tidy = (s: string) => s.replace("Graducation", "Graduation").replace("Addhar", "Aadhaar");
 
 export default async function UniversityPage({ params }: PageProps<"/universities/[uid]">) {
   const u = university(Number((await params).uid));

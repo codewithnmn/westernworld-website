@@ -14,7 +14,7 @@ export default function OnlineCoursesPage() {
                 subtitle="Live online IELTS preparation with personal training hours." />
       <Section className="bg-paper-dark/50">
         <SectionTitle eyebrow="Online" title="Online IELTS programs" center />
-        <Packages packages={ONLINE_PACKAGES} source="Online course packages" />
+        <Packages packages={ONLINE_PACKAGES} />
       </Section>
       <Section>
         <SectionTitle eyebrow="IELTS course" title="Which IELTS do you need?" center />

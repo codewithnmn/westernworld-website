@@ -16,7 +16,7 @@ export default function IeltsGeneralPage() {
                 subtitle="Online and classroom coaching for the IELTS General Training test." />
       <Section className="bg-paper-dark/50">
         <SectionTitle eyebrow="Packages" title="IELTS General Packages" center />
-        <Packages packages={IELTS_GENERAL_PACKAGES} source="IELTS General packages" />
+        <Packages packages={IELTS_GENERAL_PACKAGES} />
       </Section>
       <WithCallback source="Request call back (IELTS General)" course="IELTS General">
         <SectionTitle eyebrow="IELTS test" title="About the IELTS General test" />

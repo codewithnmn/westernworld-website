@@ -64,7 +64,7 @@ export function Section({ children, className = "", id }: { children: ReactNode;
 }
 
 /** Course packages styled as tickets; "Book Now" goes to the enquiry form, pre-filled with the package. */
-export function Packages({ packages, source }: { packages: Package[]; source: string }) {
+export function Packages({ packages }: { packages: Package[] }) {
   return (
     <div className="grid gap-6 md:grid-cols-3">
       {packages.map((p, i) => (
@@ -85,7 +85,7 @@ export function Packages({ packages, source }: { packages: Package[]; source: st
               <div><dt className="tag flex items-center gap-1 text-slate-400"><CalendarDays className="size-3" />Duration</dt><dd className="mt-1 font-semibold text-ink">{p.duration}</dd></div>
               <div><dt className="tag flex items-center gap-1 text-slate-400"><Clock className="size-3" />Training</dt><dd className="mt-1 font-semibold text-ink">{p.training}</dd></div>
             </dl>
-            <Link href={enquire(p.name)} data-source={source}
+            <Link href={enquire(p.name)}
                   className="mt-5 inline-flex items-center justify-center gap-2 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-white transition group-hover:bg-accent">
               Book Now <ArrowRight className="size-4" />
             </Link>

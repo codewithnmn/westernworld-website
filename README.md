@@ -39,6 +39,18 @@ dev login) is unreachable from this site's domain.
 this site on :3001 too when it finds `../westernworld-website`), or run the backend alone and `npm run dev -- -p 3001` here.
 Without a backend the pages work; only form submits fail.
 
+**Testing a form end to end (lead lands in the CRM):**
+1. Start the CRM (`.\dev` in the CRM repo). Its `.dev-sites.json` `Dir` must point at this folder, relative to the CRM
+   repo (e.g. `../Tenant Website/westernworld-website`), or start this site yourself with `npm run dev -- -p 3001`.
+2. The tenant must exist in the local CRM. The dev data only seeds `demo`, so either onboard `westernworld` at
+   http://localhost:3000/platform, or for a quick test put `NEXT_PUBLIC_CRM_TENANT=demo` in `.env.local` (restart
+   `npm run dev`; remove it afterwards).
+3. Submit a form on http://localhost:3001 (home boarding pass, contact page, a course "Book now"). You should land on
+   `/thank-you`.
+4. Check: the lead in the staff UI (http://localhost:3000, dev login with phone `9000000001` = Admin, or `9000000004` =
+   Front Desk), with `sourceDetail` naming the form; the welcome and staff-alert emails in Mailpit (http://localhost:8025).
+   A form error shows the CRM's message under the form (e.g. unknown tenant, invalid phone).
+
 ## Updating content (client requests)
 
 | What | Where |
@@ -47,6 +59,9 @@ Without a backend the pages work; only form submits fail.
 | News & blog posts | `content/posts.ts`: add an object; it appears on the home page, `/blog` and `/blog/<slug>` |
 | Video testimonials | `content/testimonials.ts` → `VIDEO_STORIES`: add the YouTube id |
 | Visa / IELTS result photos | `public/ieltsstu/` + the lists in `content/testimonials.ts` |
+| Which photos lead the home "Wall of wins" | `content/testimonials.ts` → `FEATURED_WINS` (first = the large photo) |
+| Logo | `public/images/logo.svg` (header and footer) |
+| Theme colours (blue & white) | `app/globals.css` → `@theme` tokens (`brand`, `accent`, `sun`, `paper`, `line`) |
 | Services | `content/services.ts` (each gets `/services/<slug>`) |
 | Destinations board | `DESTINATIONS` in `lib/site.ts` (needs a matching entry in `content/countries.json`) |
 | Phone, email, address, social links | `SITE` in `lib/site.ts` |

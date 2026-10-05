@@ -16,7 +16,7 @@ export default function IeltsAcademyPage() {
                 subtitle="IELTS Academic coaching, plus preparation for CELPIP, OET, Duolingo, GRE and GMAT." />
       <Section className="bg-paper-dark/50">
         <SectionTitle eyebrow="Packages" title="IELTS Academy Packages" center />
-        <Packages packages={IELTS_ACADEMY_PACKAGES} source="IELTS Academy packages" />
+        <Packages packages={IELTS_ACADEMY_PACKAGES} />
         <div className="mt-10 flex flex-wrap justify-center gap-3">
           <span className="text-sm font-semibold text-slate-500">We also coach for:</span>
           {ALSO.map((x) => <span key={x} className="rounded-full bg-white px-4 py-1.5 text-sm font-bold text-brand shadow-sm ring-1 ring-slate-100">{x}</span>)}

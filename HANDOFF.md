@@ -11,11 +11,67 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | W2 | Redesign: design system, boarding-pass form, 14 services, success stories + video slots, departures board, announcement bar, News & blogs | done (on `main`) |
 | MOVE1 | Moved out of softzenith-crm (`sites/westernworld`) into this repo, history kept | done |
 | W3 | Blue & white theme; student photos / testimonials moved up and highlighted on the home page | done (on `main`, c1f260e) |
+| W5 | Form validation in the browser (all forms), friendly error copy | done (on `main`) |
+| R1 | Whole-site code review: 5 fixes (CRM error mapping, thank-you email promise, mobile menu on Back, phone separators, dead code) | done (on `main`) |
 | W4 | New SVG logo; owner's service names; live-site wording on home (welcome, why us, achievements, coaching); footer © 2021 | done (on `main`, c1f260e) |
 | next | Owner copy review → merge `develop` → `main`; hosting + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
-## Session (latest): W4 — logo, service names, live-site wording (owner request, 5 Oct)
+## Session (latest): R1 — whole-site code review and fixes (owner request, 5 Oct)
+
+### Fixed
+- `serverFieldErrors` (lib/validation.ts) replaces the substring match: only the CRM's "field: reason" parts
+  (`fullName` / `phone` / `email`, plus "Invalid phone number…") go to fields; anything else (e.g. the rate limit
+  "Too many enquiries for this phone number; please try again later", checked in the CRM's `EnquiryRateLimiter`)
+  is shown as sent. Several field errors at once are all shown.
+- Thank-you page: forms add `email=no` when no email was given (`thankYouQuery` in lib/enquiry.ts); the page then shows
+  "Keep your phone handy" instead of promising an emailed confirmation.
+- Header: the mobile menu closes on any route change, so Back/Forward no longer leave it open with the page scroll-locked
+  (reproduced and re-checked in Playwright).
+- Phone check ignores `/` and `_` separators too. Removed a no-op `.replace` (universities page) and the unused
+  `data-source` / `source` prop on `Packages`.
+
+### Reviewed, no change
+Lead `sourceDetail` lengths (max 83 of 200), CSP, external links, old-URL redirects, announcement hydration.
+
+### Open for the owner
+- Thank-you page says "A confirmation is on its way on WhatsApp": the CRM only logs WhatsApp in its demo setup.
+  Confirm WhatsApp sending is configured in production, or soften the line.
+
+## Session: W5 — form validation in the browser (owner request, 5 Oct)
+
+### What I did
+- `lib/validation.ts`: one set of rules for every form, matching the CRM so it does not reject what the browser
+  accepted: name = CRM `NewLead.NAME_PATTERN` (letters in any script, spaces, . ' -, min 2 letters, no digits);
+  phone = Indian mobile (10 digits, 6–9 first; `0`, `91`, `+91`, `0091` prefixes, spaces/dashes ok) or a `+country`
+  number; email format + common domain typos ("gmial.com" → "Did you mean …gmail.com?"); message ≥ 3 chars; course
+  required. Values are tidied before sending (trimmed names, lower-case email, phone as E.164 e.g. `+919876543210`).
+  `serverFieldError` maps a CRM rejection (phone / email / name) to a friendly message on that field.
+- `components/FormChecks.tsx`: `useFormChecks` (check on blur, then live while fixing; all on submit, focus the first
+  problem) and `FieldError` (`role="alert"`, linked by `aria-describedby`, `aria-invalid` on the field). Forms are
+  `noValidate`, so the browser's own bubbles are gone.
+- Wired into `EnquiryForm` (every Call back / Book now / Enroll / Keep in touch form), `BoardingPass` (themed name
+  message) and `NewsletterBox` (also gained an `aria-label`).
+- `lib/enquiry.ts`: a network failure now shows a friendly message instead of "Failed to fetch"; the generic server
+  fallback is friendlier too.
+- Error copy is light-hearted and always says how to fix it (owner asked for "witty and easy to understand").
+
+### Verification
+- lint, `tsc`, build: pass. Rules run against ~30 sample inputs (Indian/foreign numbers, Hindi names, typos).
+- Playwright on the dev server: empty submit shows every message and focuses the first field, nothing is sent;
+  bad email/phone show inline; a valid form posts `+919876543210`; with no backend the friendly error shows.
+  Contact page, home boarding pass and newsletter box checked.
+- Not verified: a live submit against the CRM (backend not running).
+
+## Session: docs — how to test forms against the CRM (5 Oct)
+- README: "Testing a form end to end" (start CRM, tenant must exist locally: onboard `westernworld` at `/platform` or
+  use `NEXT_PUBLIC_CRM_TENANT=demo`, where to see the lead and emails); content table now lists `FEATURED_WINS`, the
+  logo and theme tokens. CLAUDE.md / AGENTS.md unchanged (rules still accurate; AGENTS.md is generated by `next dev`).
+- Local only (not in any repo): the CRM's ignored `.dev-sites.json` pointed at `../westernworld-website`; fixed to
+  `../Tenant Website/westernworld-website` so `.\dev` starts this site.
+- Not verified this session: a live submit (CRM backend not running).
+
+## Session: W4 — logo, service names, live-site wording (owner request, 5 Oct)
 
 ### What I did
 - **Logo**: `public/images/logo.svg` (owner's file, checked: plain paths, no scripts or external refs; Next serves .svg

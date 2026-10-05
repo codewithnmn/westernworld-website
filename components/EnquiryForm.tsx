@@ -3,10 +3,16 @@
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 import { Send } from "lucide-react";
-import { submitEnquiry } from "@/lib/enquiry";
+import { FieldError, invalid, useFormChecks } from "@/components/FormChecks";
+import { submitEnquiry, thankYouQuery } from "@/lib/enquiry";
+import { checkCourse, checkEmail, checkMessage, checkName, checkPhone, normalisePhone, serverFieldErrors, tidy } from "@/lib/validation";
 import { Turnstile } from "@/components/Turnstile";
 
 type Field = "name" | "email" | "mobile" | "message" | "course";
+
+const CHECKS: Record<Field, (v: string) => string> = {
+  name: checkName, email: (v) => checkEmail(v, true), mobile: checkPhone, course: checkCourse, message: checkMessage,
+};
 
 /**
  * Every form on the site (Keep in touch, Call back, Request call back, Book now, Enroll now) is this one form with
@@ -31,27 +37,34 @@ export default function EnquiryForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [attempt, setAttempt] = useState(0);
+  const has = (x: Field) => fields.includes(x);
+  const checks = useFormChecks(Object.fromEntries(fields.map((x) => [x, CHECKS[x]])));
 
   const submit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
+    if (!checks.validate(e.currentTarget)) return;
     const f = Object.fromEntries(new FormData(e.currentTarget)) as Record<string, string>;
     setBusy(true);
-    setError("");
     try {
       await submitEnquiry({
-        fullName: f.name,
-        phone: f.mobile,
-        email: f.email || undefined,
-        serviceInterest: f.course || undefined,
+        fullName: tidy(f.name ?? ""),
+        phone: normalisePhone(f.mobile ?? "") ?? f.mobile,
+        email: f.email?.trim().toLowerCase() || undefined,
+        serviceInterest: tidy(f.course ?? "") || undefined,
         preferredCountry: country,
-        message: f.message || undefined,
+        message: f.message?.trim() || undefined,
         sourceDetail: `westernworldvisaservices.com: ${source}`,
         website: f.website || undefined,
         captchaToken: f["cf-turnstile-response"] || undefined,
       });
-      router.push(`/thank-you?${new URLSearchParams({ name: f.name.split(" ")[0] })}`);
+      router.push(`/thank-you?${thankYouQuery(tidy(f.name), f.email)}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      const message = err instanceof Error ? err.message : String(err);
+      const { fields: bad, rest } = serverFieldErrors(message);
+      const shown = bad.filter((b) => has(b.field));
+      shown.forEach((b) => checks.setError(b.field, b.message));
+      if (rest || shown.length < bad.length) setError(rest || message);
       setAttempt((n) => n + 1); // captcha tokens are single-use
       setBusy(false);
     }
@@ -63,10 +76,10 @@ export default function EnquiryForm({
       : "border-line bg-white text-ink placeholder:text-slate-400 focus:border-ink focus:ring-ink/5"
   }`;
   const label = `tag mb-1.5 block ${dark ? "text-white/60" : "text-slate-500"}`;
-  const has = (x: Field) => fields.includes(x);
+  const props = (x: Field) => ({ ...checks.field(x), className: `${input} ${invalid(!!checks.errors[x], dark)}` });
 
   return (
-    <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
+    <form onSubmit={submit} noValidate className="grid gap-4 sm:grid-cols-2">
       {title && (
         <div className="sm:col-span-2">
           <h3 className={`text-2xl font-semibold ${dark ? "text-white" : "text-ink"}`}>{title}</h3>
@@ -75,28 +88,33 @@ export default function EnquiryForm({
       )}
       {has("name") && (
         <label className="sm:col-span-2"><span className={label}>Name *</span>
-          <input name="name" required maxLength={200} autoComplete="name" className={input} defaultValue={defaults.name} />
+          <input {...props("name")} required maxLength={200} autoComplete="name" defaultValue={defaults.name} />
+          <FieldError {...checks.error("name")} dark={dark} />
         </label>
       )}
       {has("email") && (
         <label><span className={label}>E-Mail *</span>
-          <input name="email" type="email" required maxLength={200} autoComplete="email" className={input} defaultValue={defaults.email} />
+          <input {...props("email")} type="email" required maxLength={200} autoComplete="email" defaultValue={defaults.email} />
+          <FieldError {...checks.error("email")} dark={dark} />
         </label>
       )}
       {has("mobile") && (
         <label><span className={label}>Mobile *</span>
-          <input name="mobile" type="tel" required maxLength={20} autoComplete="tel" placeholder="98765 43210" className={input} />
+          <input {...props("mobile")} type="tel" inputMode="tel" required maxLength={20} autoComplete="tel" placeholder="98765 43210" />
+          <FieldError {...checks.error("mobile")} dark={dark} />
         </label>
       )}
       {has("course") && (
         <label className="sm:col-span-2"><span className={label}>{courseLabel} *</span>
-          <input name="course" required maxLength={200} className={input} defaultValue={defaults.course}
+          <input {...props("course")} required maxLength={200} defaultValue={defaults.course}
                  placeholder="e.g. IELTS Academic, Study in Canada" />
+          <FieldError {...checks.error("course")} dark={dark} />
         </label>
       )}
       {has("message") && (
         <label className="sm:col-span-2"><span className={label}>Message *</span>
-          <textarea name="message" required rows={3} maxLength={2000} className={input} defaultValue={defaults.message} />
+          <textarea {...props("message")} required rows={3} maxLength={2000} defaultValue={defaults.message} />
+          <FieldError {...checks.error("message")} dark={dark} />
         </label>
       )}
       {/* Honeypot: hidden from people, bots fill it in. */}
