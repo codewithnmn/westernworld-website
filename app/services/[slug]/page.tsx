@@ -6,7 +6,7 @@ import WithCallback from "@/components/WithCallback";
 import { CtaBand, PageHero } from "@/components/blocks";
 import { SERVICES, TESTS, service as findService, serviceHref } from "@/content/services";
 
-/** Services with their own page (the others link to an existing page, e.g. Visa filing → /visa-assistance). */
+/** Services with their own page (the others link to an existing page, e.g. Visa Support & Filing → /visa-assistance). */
 const OWN_PAGE = SERVICES.filter((s) => !s.href);
 
 export const dynamicParams = false;

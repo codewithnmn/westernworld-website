@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, ClipboardCheck, MapPin, Plus, Target, UserRound } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BadgeCheck, ClipboardCheck, MapPin, Plus, Target, UserRound } from "lucide-react";
 import BoardingPass from "@/components/BoardingPass";
 import NewsletterBox from "@/components/NewsletterBox";
 import VideoStories from "@/components/VideoStories";
@@ -10,7 +10,7 @@ import { DeparturesBoard, JourneyRoute } from "@/components/journey";
 import { NewsSection } from "@/components/news";
 import { HOME_PACKAGES } from "@/content/copy";
 import { LEGS, TESTS } from "@/content/services";
-import { SCORECARDS, VISA_WINS } from "@/content/testimonials";
+import { FEATURED_WINS, SCORECARDS, VISA_WINS } from "@/content/testimonials";
 import { DESTINATIONS, SITE, enquire, tel } from "@/lib/site";
 
 const FAQ = [
@@ -37,7 +37,22 @@ const COACHING = [
   ["3:1 faculty to student ratio", "You will always have multiple trainers collectively working on you to achieve your desired band, with daily private classes to learn key concepts and get your doubts answered."],
 ];
 
-const STATS = [["2000+", "Enrolled students"], ["600+", "Reviews"], ["40+", "Courses"], [String(DESTINATIONS.length), "Study destinations"]];
+const STATS = [["2000+", "Enrolled students"], ["600+", "Reviews"], ["40+", "Courses"], ["375+", "Publications"]];
+
+/** "Welcome" text from the live site (westernworldvisaservices.com), lightly corrected. */
+const WELCOME = [
+  "WWVS helps clients with visa applications, requirements and processing. The requirement for a visa depends on the country the client wants to study in. Equipped with the latest information about student migration, our team helps clients through their student visa.",
+  "We provide IELTS training too. Our main motive is to bridge the gap for all queries related to IELTS and overseas education.",
+  "We provide educational avenues in international countries like the UK, Canada, USA, Germany, Europe, Australia and Singapore, along with coaching for IELTS General and Academic courses.",
+  "We provide quality coaching to help students in the IELTS exam in all four sections. Students can enrol in both online and offline IELTS course preparation. We are a team of talented faculty and teachers, committed to quality IELTS training focused on the student’s dream of clearing the exam. Our facilities make learning effective and exciting for our students.",
+];
+
+/** The three service boxes from the live site's banner. */
+const HIGHLIGHTS = [
+  ["Career Counselling", "Western World Visa Services offers career counselling for the world’s most influential universities.", "/services/career-counselling"],
+  ["Visa Support & Filing", "Western World Visa Services helps with the visa support and filing process for renowned universities.", "/visa-assistance"],
+  ["IELTS | PTE Training", "Western World Visa Services started its journey with a clear vision to be a pioneer in the field of immigration and IELTS / PTE / CELPIP training.", "/services/english-test-preparation"],
+] as const;
 
 const serviceCount = LEGS.reduce((n, l) => n + l.services.length, 0);
 
@@ -92,17 +107,18 @@ export default function Home() {
               </a>
             </div>
 
-            <Link href="#wins" className="group mt-10 flex w-fit items-center gap-4">
+            <Link href="#wins" className="group mt-10 flex w-fit items-center gap-4 rounded-2xl border border-line bg-white p-3 pr-5 shadow-sm transition hover:border-accent hover:shadow-md">
               <span className="flex -space-x-3">
-                {[VISA_WINS[19], VISA_WINS[0], VISA_WINS[28], VISA_WINS[8]].map((src) => (
-                  <span key={src} className="relative size-12 overflow-hidden rounded-full ring-3 ring-paper">
-                    <Image src={src} alt="" fill sizes="48px" className="object-cover" />
+                {FEATURED_WINS.slice(0, 5).map((src) => (
+                  <span key={src} className="relative size-14 overflow-hidden rounded-full ring-3 ring-white">
+                    <Image src={src} alt="" fill sizes="56px" className="object-cover object-[50%_25%]" />
                   </span>
                 ))}
               </span>
               <span className="text-sm leading-snug text-slate-600">
-                <span className="font-semibold text-ink">{VISA_WINS.length} visas, {SCORECARDS.length} scorecards</span> on our wall.
-                <span className="block font-medium text-accent group-hover:underline">See real students →</span>
+                <span className="flex items-center gap-1 font-semibold text-ink"><BadgeCheck className="size-4 text-accent" />{VISA_WINS.length} visas, {SCORECARDS.length} scorecards</span>
+                photographed at our office.
+                <span className="block font-medium text-accent group-hover:underline">See our students →</span>
               </span>
             </Link>
           </div>
@@ -112,6 +128,72 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* ── Wall of wins (testimonials): straight after the hero, photos are our strongest proof ── */}
+      <section id="wins" className="relative scroll-mt-24 border-t border-line bg-white py-16 lg:py-24">
+        <div className="mx-auto max-w-7xl px-4">
+          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
+            <SectionTitle eyebrow="Wall of wins" title={<>Not stock photos.<br />Our students, their visas.</>}
+                          intro="Every photo was taken at our office the day a student collected their passport, or got their IELTS result." />
+            <dl className="mb-10 grid shrink-0 grid-cols-3 gap-px overflow-hidden rounded-xl border border-line bg-line lg:mb-14">
+              {[[VISA_WINS.length, "Visas on camera"], [SCORECARDS.length, "IELTS scorecards"], ["2000+", "Students enrolled"]].map(([n, label]) => (
+                <div key={label} className="flex flex-col bg-paper px-5 py-4">
+                  <dt className="tag order-2 text-slate-500">{label}</dt>
+                  <dd className="font-display text-3xl font-semibold text-brand">{n}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+          <WallOfWins limit={12} feature light />
+          <p className="mt-6 text-center">
+            <Link href="/success-stories" className="tag inline-flex items-center gap-1 text-accent hover:underline">
+              All success stories <ArrowUpRight className="size-3.5" />
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      {/* ── Video stories ───────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-brand-dark py-16 lg:py-20">
+        <div className="map-grid absolute inset-0 opacity-30 [filter:invert(1)]" aria-hidden />
+        <div className="relative mx-auto max-w-7xl px-4">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <p className="tag text-sun">In their words</p>
+              <h3 className="mt-2 text-3xl font-semibold text-white">Student video stories</h3>
+            </div>
+            <p className="max-w-sm text-sm text-white/60">Students talk about their journey, from the first counselling session to landing abroad.</p>
+          </div>
+          <VideoStories />
+        </div>
+      </section>
+
+      {/* ── Welcome (the live site's own words) ─────────────── */}
+      <Section id="welcome">
+        <div className="grid gap-12 lg:grid-cols-[1.2fr_1fr]">
+          <div>
+            <SectionTitle eyebrow="About us" title="Welcome to Western World Visa Services" />
+            <div className="-mt-4 space-y-4 text-slate-600">
+              {WELCOME.map((p) => <p key={p.slice(0, 24)}>{p}</p>)}
+            </div>
+          </div>
+          <ul className="grid content-start gap-4">
+            {HIGHLIGHTS.map(([title, text, href], n) => (
+              <li key={title}>
+                <Link href={href} className="group flex gap-5 rounded-xl border border-line bg-white p-6 transition hover:border-accent hover:shadow-lg hover:shadow-brand-dark/5">
+                  <span className="font-mono text-sm text-accent">0{n + 1}</span>
+                  <span>
+                    <span className="flex items-center gap-2 font-display text-xl font-semibold text-ink">
+                      {title}<ArrowUpRight className="size-4 text-slate-300 transition group-hover:text-accent" />
+                    </span>
+                    <span className="mt-1 block text-slate-600">{text}</span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </Section>
 
       {/* ── Services ticker ─────────────────────────────────── */}
       <div className="overflow-hidden border-y border-ink bg-ink py-3 text-white" aria-hidden>
@@ -140,32 +222,6 @@ export default function Home() {
         <JourneyRoute />
       </Section>
 
-      {/* ── Wall of wins (testimonials) ─────────────────────── */}
-      <section id="wins" className="relative scroll-mt-24 overflow-hidden bg-brand-dark py-16 lg:py-24">
-        <div className="map-grid absolute inset-0 opacity-30 [filter:invert(1)]" aria-hidden />
-        <div className="relative mx-auto max-w-7xl px-4">
-          <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
-            <SectionTitle light eyebrow="Wall of wins" title={<>Not stock photos.<br />Our students, their visas.</>}
-                          intro="Every photo was taken at our office the day a student collected their passport, or got their IELTS result." />
-            <Link href="/success-stories" className="tag mb-14 hidden items-center gap-1 text-white/70 hover:text-white lg:inline-flex">
-              All success stories <ArrowUpRight className="size-3.5" />
-            </Link>
-          </div>
-          <WallOfWins limit={10} />
-
-          <div className="mt-20 border-t border-white/10 pt-12">
-            <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
-              <div>
-                <p className="tag text-sun">In their words</p>
-                <h3 className="mt-2 text-3xl font-semibold text-white">Student video stories</h3>
-              </div>
-              <p className="max-w-sm text-sm text-white/60">Students talk about their journey, from the first counselling session to landing abroad.</p>
-            </div>
-            <VideoStories />
-          </div>
-        </div>
-      </section>
-
       {/* ── Destinations ────────────────────────────────────── */}
       <Section id="destinations">
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.4fr] lg:items-center">
@@ -175,7 +231,7 @@ export default function Home() {
               We help with universities and colleges in {DESTINATIONS.length} countries: courses, admissions,
               scholarships and the visa. Pick a destination to see its universities.
             </p>
-            <Image src={VISA_WINS[29]} alt="A Western World student receiving her visa at our office" width={640} height={600}
+            <Image src="/ieltsstu/ielts30.jpeg" alt="A Western World student receiving her visa at our office" width={640} height={600}
                    sizes="(min-width: 1024px) 33vw, 100vw" className="mt-8 hidden aspect-[4/3] rounded-xl object-cover object-[50%_35%] lg:block" />
           </div>
           <DeparturesBoard />
@@ -201,12 +257,12 @@ export default function Home() {
 
         <div className="mt-16 grid gap-12 lg:grid-cols-[1fr_1.3fr]">
           <div>
-            <h3 className="text-3xl font-semibold">How our coaching works</h3>
+            <h3 className="text-3xl font-semibold">How we are different</h3>
             <div className="mt-6 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
               {[
-                [<UserRound key="u" />, "One-to-one sessions", "Personal sessions with expert trainers, planned around you, in class or online."],
-                [<Target key="t" />, "A study plan for every student", "Built on your own strengths and weaknesses."],
-                [<ClipboardCheck key="c" />, "Comprehensive mock tests", "A mock test after every module."],
+                [<UserRound key="u" />, "One-to-one session", "Get trained by expert professionals at a personal level, in a safe and interactive environment to learn and grow. These personalised sessions can be planned flexibly and taken anywhere."],
+                [<Target key="t" />, "Customized study plan for every student", "Students are trained on their strengths and weaknesses through a tailor-made study plan."],
+                [<ClipboardCheck key="c" />, "Comprehensive mock test series", "Comprehensive mock tests after completion of every module."],
               ].map(([icon, title, text]) => (
                 <div key={String(title)} className="flex gap-4 rounded-xl border border-line p-4">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-paper text-ink [&_svg]:size-5">{icon}</span>
@@ -239,7 +295,7 @@ export default function Home() {
       <Section>
         <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="relative">
-            <Image src={VISA_WINS[19]} alt="A Western World counsellor handing a student his visa" width={1280} height={720}
+            <Image src="/ieltsstu/ielts20.jpeg" alt="A Western World counsellor handing a student his visa" width={1280} height={720}
                    sizes="(min-width: 1024px) 50vw, 100vw" className="aspect-[16/11] w-full rounded-xl object-cover" />
             <div className="absolute -bottom-6 left-6 rounded-xl bg-sun px-5 py-4 shadow-xl">
               <p className="font-display text-4xl font-semibold text-ink">2000+</p>
@@ -247,16 +303,23 @@ export default function Home() {
             </div>
           </div>
           <div>
-            <SectionTitle eyebrow="Why Western World" title="We study every case before we take it on." />
+            <SectionTitle eyebrow="Why us?" title="We study every case before we take it on." />
             <div className="-mt-4 space-y-4 text-slate-600">
               <p>
-                With hard work and transparency, Western World Visa Services has become one of the leading education
-                consultancies in the region. Our team of passionate, experienced counsellors works on every case
-                individually, taking care of each student&rsquo;s situation and preferences.
+                With extreme hard work and transparency, Western World Visa Services has succeeded in developing its
+                position as one of the leading education consultancies. We, at WWVS, have a team of passionate and
+                experienced members who are dedicatedly working to realise the dreams of aspiring candidates.
               </p>
               <p>
-                We stay up to date with every change in student migration rules, and we keep you informed of your
-                case status at every stage.
+                At WWVS, we consider it our professional concern to study and examine every case before actually
+                representing the client, taking care of individuality and client preference. Being experienced experts,
+                our team is always up to date with recent developments and updates. Our organisation takes immense pride
+                in working closely with clients and meeting their every need, and we always keep our clients informed of
+                the latest status of their cases.
+              </p>
+              <p>
+                Providing the right study abroad solutions to students over the years, we have set the highest
+                benchmarks in tune with global competencies.
               </p>
             </div>
             <dl className="mt-8 grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-line bg-line sm:grid-cols-4">

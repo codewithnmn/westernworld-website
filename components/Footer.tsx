@@ -26,7 +26,7 @@ export default function Footer() {
         <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
           <div className="space-y-5">
             <div className="inline-block rounded-md bg-white px-3 py-2">
-              <Image src="/images/logo.png" alt={SITE.legalName} width={200} height={40} className="h-8 w-auto" />
+              <Image src="/images/logo.svg" alt={SITE.legalName} width={972} height={171} className="h-9 w-auto" />
             </div>
             <p className="max-w-xs text-sm leading-relaxed">{SITE.footerAbout}</p>
             <ul className="space-y-2.5 text-sm">
@@ -75,7 +75,7 @@ export default function Footer() {
       </div>
       <div className="relative border-t border-white/10">
         <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-2 px-4 py-5 text-xs text-white/45">
-          <p>© {new Date().getFullYear()} {SITE.legalName} All Rights Reserved.</p>
+          <p>© 2021 {SITE.legalName} All Rights Reserved.</p>
           <p className="tag">DEL · ROH → YYZ · LHR · JFK · FRA · CDG · DUB · AKL · SIN</p>
         </div>
       </div>

@@ -7,8 +7,16 @@
 const range = (from: number, to: number, skip: number[] = []) =>
   Array.from({ length: to - from + 1 }, (_, i) => from + i).filter((n) => !skip.includes(n));
 
-/** Visa handovers (student holding the passport with the visa). */
-export const VISA_WINS = range(1, 34, [33]).map((n) => `/ieltsstu/ielts${n}.jpeg`);
+const visa = (n: number) => `/ieltsstu/ielts${n}.jpeg`;
+
+/**
+ * The sharpest visa-handover photos, shown first and largest on the home page. Change the order to change which
+ * student leads the wall (the first one is the big photo).
+ */
+export const FEATURED_WINS = [29, 30, 25, 17, 10, 12, 31, 14, 28, 9, 11, 22].map(visa);
+
+/** Visa handovers (student holding the passport with the visa), featured photos first. */
+export const VISA_WINS = [...FEATURED_WINS, ...range(1, 34, [33]).map(visa).filter((src) => !FEATURED_WINS.includes(src))];
 
 /** IELTS scorecards. */
 export const SCORECARDS = [

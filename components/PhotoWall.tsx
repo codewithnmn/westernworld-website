@@ -2,19 +2,23 @@
 
 import Image from "next/image";
 import { useRef, useState } from "react";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { BadgeCheck, ChevronLeft, ChevronRight, X } from "lucide-react";
 
 /**
  * Uniform photo grid with a lightbox (native <dialog>: focus trap, Esc to close, no library).
  * `fit="contain"` for scorecards (text must stay readable), `cover` for photos.
  */
-export default function PhotoWall({ images, alt, fit = "cover", limit, dark = false }: {
+export default function PhotoWall({ images, alt, fit = "cover", limit, dark = false, feature = false, badge }: {
   images: string[];
   alt: string;
   fit?: "cover" | "contain";
   /** Show this many until "Show all" is pressed. */
   limit?: number;
   dark?: boolean;
+  /** Mosaic: the first photo is shown large (2×2). */
+  feature?: boolean;
+  /** Small label on each photo, e.g. "Visa in hand". */
+  badge?: string;
 }) {
   const dialog = useRef<HTMLDialogElement>(null);
   const [current, setCurrent] = useState(0);
@@ -29,16 +33,27 @@ export default function PhotoWall({ images, alt, fit = "cover", limit, dark = fa
 
   return (
     <>
-      <ul className={`grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 ${fit === "contain" ? "" : "xl:grid-cols-5"}`}>
-        {shown.map((src, n) => (
-          <li key={src}>
-            <button onClick={() => open(n)} aria-label={`Open photo ${n + 1}`}
-                    className={`group relative block w-full overflow-hidden rounded-lg ${fit === "contain" ? "aspect-square bg-white" : "aspect-[4/5] bg-brand-dark/20"}`}>
-              <Image src={src} alt={alt} fill sizes="(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-                     className={`transition duration-500 group-hover:scale-[1.04] ${fit === "contain" ? "object-contain" : "object-cover"}`} />
-            </button>
-          </li>
-        ))}
+      <ul className={`grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 ${fit === "contain" ? "" : "xl:grid-cols-5"} ${feature ? "auto-rows-[12rem] sm:auto-rows-[14rem] xl:auto-rows-[15rem]" : ""}`}>
+        {shown.map((src, n) => {
+          const big = feature && n === 0;
+          // Mosaic on two columns: drop a last photo that would sit alone in its row.
+          const orphan = feature && !all && shown.length % 2 === 0 && n === shown.length - 1;
+          return (
+            <li key={src} className={big ? "col-span-2 row-span-2" : orphan ? "max-sm:hidden" : ""}>
+              <button onClick={() => open(n)} aria-label={`Open photo ${n + 1}`}
+                      className={`group relative block w-full overflow-hidden rounded-lg ${feature ? "h-full" : fit === "contain" ? "aspect-square" : "aspect-[4/5]"} ${fit === "contain" ? "bg-white" : "bg-brand-dark/20"} ${big ? "rounded-xl shadow-xl shadow-brand-dark/15" : ""}`}>
+                <Image src={src} alt={alt} fill
+                       sizes={big ? "(min-width: 1280px) 40vw, (min-width: 640px) 66vw, 100vw" : "(min-width: 1280px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"}
+                       className={`transition duration-500 group-hover:scale-[1.04] ${fit === "contain" ? "object-contain" : "object-cover object-[50%_30%]"}`} />
+                {badge && (
+                  <span className={`tag absolute bottom-2 left-2 inline-flex items-center gap-1 rounded-full bg-white/95 text-brand shadow ${big ? "px-3 py-1.5" : "px-2 py-1 text-[9px]"}`}>
+                    <BadgeCheck className={big ? "size-4 text-accent" : "size-3 text-accent"} />{badge}
+                  </span>
+                )}
+              </button>
+            </li>
+          );
+        })}
       </ul>
       {!all && limit && images.length > limit && (
         <div className="mt-8 text-center">

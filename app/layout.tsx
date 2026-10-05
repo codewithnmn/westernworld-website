@@ -35,8 +35,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-50 focus:rounded focus:bg-white focus:px-4 focus:py-2">
           Skip to content
         </a>
-        <AnnouncementBar />
-        <Header />
+        {/* Announcement + menu stay pinned together while scrolling (owner, 5 Oct 2026). */}
+        <div className="sticky top-0 z-40">
+          <AnnouncementBar />
+          <Header />
+        </div>
         <main id="main" className="flex-1">{children}</main>
         <Footer />
         <FloatingContact />

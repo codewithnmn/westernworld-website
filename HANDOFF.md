@@ -1,4 +1,4 @@
-# Handoff — 2026-10-05 (website moved to its own repo)
+# Handoff — 2026-10-05 (new logo, live-site wording, blue & white theme)
 
 Read `README.md` first (CRM connection, where content lives, git flow). CRM-side rules and history:
 [codewithnmn/softzenith-crm](https://github.com/codewithnmn/softzenith-crm) (`CLAUDE.md`, `HANDOFF.md`).
@@ -10,10 +10,67 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | W1 | Rebuild of the old PHP site: all content + old URLs, every form → CRM public intake (tenant `westernworld`) | done (on `main`) |
 | W2 | Redesign: design system, boarding-pass form, 14 services, success stories + video slots, departures board, announcement bar, News & blogs | done on `develop` (copy needs owner review) |
 | MOVE1 | Moved out of softzenith-crm (`sites/westernworld`) into this repo, history kept | done |
+| W3 | Blue & white theme; student photos / testimonials moved up and highlighted on the home page | done, uncommitted (owner review) |
+| W4 | New SVG logo; owner's service names; live-site wording on home (welcome, why us, achievements, coaching); footer © 2021 | done, uncommitted (owner review) |
 | next | Owner copy review → merge `develop` → `main`; hosting + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
-## Session (latest): MOVE1 — website moved into its own repo
+## Session (latest): W4 — logo, service names, live-site wording (owner request, 5 Oct)
+
+### What I did
+- **Logo**: `public/images/logo.svg` (owner's file, checked: plain paths, no scripts or external refs; Next serves .svg
+  unoptimized). Header and footer use it; `public/images/logo.png` is now unused (kept in case).
+- **Footer**: `© 2021` fixed, as on the live site (was the current year).
+- **Service names** (`content/services.ts`), owner's list, kept as written: Career Counselling, Profile Assessment,
+  Profile Building, Apply to University, Interview Preparation, IELTS, PTE, TOEFL & Duolingo Preparation, FOREX Transfer,
+  Education Loan, SOP Writing, Flight Booking, Accommodation in Every Country, Part-Time Job Assistance, Scholarships.
+  Visa filing kept, renamed "Visa Support & Filing" (live site's box). Slugs and URLs unchanged.
+- **Home (`app/page.tsx`), live-site wording**: new "Welcome to Western World Visa Services" section (after the wall of
+  wins) with the live welcome text and its 3 boxes (Career Counselling, Visa Support & Filing, IELTS | PTE Training);
+  "Why us?" now the live text in full; "How we are different" items use the live text; achievements back to the live
+  four (2000+ students, 600+ reviews, 40+ courses, 375+ publications).
+
+- **Header (follow-up)**: the top contact strip ("Rohtak ✈ the world…", phone, email, socials) is gone; address, email
+  and socials stay in the footer and on the contact page. The main bar has a call button (icon; number shown from 1536 px)
+  and the mobile menu lists phone, email and socials at the bottom. The announcement bar and the menu are now pinned
+  together (`sticky` wrapper in `app/layout.tsx`); before, only the menu was sticky, so the bar scrolled away.
+
+### Choices to confirm with the owner
+- Live text lightly corrected, not copied blindly: typos ("Filling", "Wester world", "A extensive"), and the live
+  welcome paragraph names **"TIPS Abroad Study"** (another business), so that name was removed. "Will be able to help
+  clients achieve their student visas" softened (no visa guarantees).
+- Not copied: the live IELTS General packages intro (it is the IELTS Academic description, factually wrong for
+  General) and the "60% of PR eligibility" line in "Our courses". CELPIP / OET / GRE / GMAT not re-added to the menu
+  (live links all point at the IELTS page; not in the owner's service list).
+
+### Verification
+- `npm run lint`, `npx tsc --noEmit`, `npm run build` (252 pages): pass. Playwright screenshots: header (1280 / 1536 px, scrolled; 400 px menu),
+  welcome section, footer.
+
+## Session: W3 — blue & white theme, photos up front (owner request, 5 Oct)
+
+### What I did
+- **Theme** (`app/globals.css` tokens only, no class renames): accent red → bright blue `#1f6feb`, `sun` yellow → pale
+  sky `#a9d8ff` (name kept, see comment), `paper`/`line` warm beige → white / pale blue. Logo navy unchanged. Error text
+  stays red (`EnquiryForm`, `BoardingPass`).
+- **Photos first** (`app/page.tsx`): "Wall of wins" now comes straight after the hero (before the services ticker and
+  the route), on white, with a proof strip (visas on camera / scorecards / 2000+ students) and a mosaic: first photo
+  large, "Visa in hand" badge on every visa photo, 12 shown then "Show all". Video stories moved to their own navy band
+  below it. Hero proof chip is bigger (5 faces in a white card).
+- `content/testimonials.ts`: `FEATURED_WINS` (12 sharpest photos, first = the big one; reorder to change);
+  `VISA_WINS` now lists them first. Home destination / why-us images are now explicit paths (indices moved).
+- `PhotoWall`: `feature` (mosaic) and `badge` props; `WallOfWins`: `feature`, `light` props. `/success-stories`
+  unchanged (dark, plain grid).
+
+### Verification
+- `npm run lint`, `npx tsc --noEmit`, `npm run build`: pass. Playwright screenshots at 1440 px and 400 px (hero, wall, test prep).
+
+### Assumptions
+- No written testimonials were added: the old site has none and quotes must not be invented. Real quotes (with the
+  student's consent) or YouTube ids in `VIDEO_STORIES` would be the next credibility step.
+- Featured photos chosen for sharpness and resolution only; owner may prefer other students first.
+
+## Session: MOVE1 — website moved into its own repo
 
 ### What I did
 - History: `git subtree split --prefix=sites/westernworld` in softzenith-crm, merged into this repo's initial commit

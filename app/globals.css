@@ -1,20 +1,21 @@
 @import "tailwindcss";
 
 /*
- * Western World design language: travel documents. Navy + red from the logo, on warm "paper",
- * a mono face for ticket details, a characterful grotesque for headlines.
+ * Western World design language: travel documents in blue and white (owner, 5 Oct 2026). Logo navy + a bright
+ * blue accent on white / pale-blue "paper", a mono face for ticket details, a characterful grotesque for headlines.
+ * `sun` is the light highlight (badges, eyebrows on navy); it is a pale sky blue, the name is kept from v1.
  */
 @theme {
   --color-brand: #1b2b77;
   --color-brand-dark: #0e1645;
   --color-brand-light: #e6eaf8;
-  --color-accent: #e2242f;
-  --color-accent-dark: #bf1a24;
+  --color-accent: #1f6feb;
+  --color-accent-dark: #1857c2;
   --color-sky: #7cc4ff;
-  --color-sun: #ffcf4a;
-  --color-paper: #f6f3ec;
-  --color-paper-dark: #ece6da;
-  --color-line: #e2dccf;
+  --color-sun: #a9d8ff;
+  --color-paper: #f3f7fd;
+  --color-paper-dark: #e5edf9;
+  --color-line: #d8e2f1;
   --color-ink: #0f1633;
   --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--ff-display), var(--ff-body), ui-sans-serif, sans-serif;

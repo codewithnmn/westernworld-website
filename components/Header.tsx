@@ -25,22 +25,14 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-40">
-      <div className="border-b border-line bg-white text-xs text-slate-600">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5">
-          <p className="tag hidden text-slate-500 sm:block">Rohtak <span className="text-accent">✈</span> the world · Study abroad · Visa · Test prep</p>
-          <div className="flex items-center gap-5">
-            <a href={tel(SITE.phones[0])} className="flex items-center gap-1.5 font-medium text-ink hover:text-accent"><Phone className="size-3.5" />{SITE.phones[0]}</a>
-            <a href={`mailto:${SITE.email}`} className="hidden items-center gap-1.5 hover:text-accent md:flex"><Mail className="size-3.5" />{SITE.email}</a>
-            <SocialIcons className="[&_a]:size-6 [&_a]:bg-ink/5 [&_a]:text-ink [&_a:hover]:bg-ink [&_a:hover]:text-white [&_svg]:size-3" />
-          </div>
-        </div>
-      </div>
+    // Sticky with the announcement bar: the wrapper in app/layout.tsx. Address, email and socials live in the footer
+    // and on the contact page; the header keeps one call button (owner, 5 Oct 2026).
+    <header className="relative">
 
       <div className="border-b border-line bg-paper/90 backdrop-blur-md">
         <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
           <Link href="/" className="shrink-0">
-            <Image src="/images/logo.png" alt={SITE.legalName} width={200} height={40} priority className="h-9 w-auto" />
+            <Image src="/images/logo.svg" alt={SITE.legalName} width={972} height={171} priority className="h-9 w-auto sm:h-10" />
           </Link>
 
           <nav aria-label="Main" className="hidden items-center xl:flex">
@@ -73,7 +65,11 @@ export default function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 whitespace-nowrap">
+            <a href={tel(SITE.phones[0])} aria-label={`Call ${SITE.phones[0]}`}
+               className="flex items-center gap-2 rounded-full border border-ink/15 p-2.5 text-sm font-semibold text-ink transition hover:border-accent hover:text-accent 2xl:px-4">
+              <Phone className="size-4" /><span className="hidden 2xl:inline">{SITE.phones[0]}</span>
+            </a>
             <Link href={enquire("Free counselling")}
                   className="hidden items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent sm:inline-flex">
               Free counselling <ArrowUpRight className="size-4" />
@@ -85,7 +81,7 @@ export default function Header() {
         </div>
 
         {open && (
-          <nav aria-label="Mobile" onClick={(e) => (e.target as HTMLElement).closest("a") && setOpen(false)} className="h-[calc(100dvh-7rem)] overflow-y-auto border-t border-line bg-paper px-4 pb-24 xl:hidden">
+          <nav aria-label="Mobile" onClick={(e) => (e.target as HTMLElement).closest("a") && setOpen(false)} className="h-[calc(100dvh-8rem)] overflow-y-auto border-t border-line bg-paper px-4 pb-24 xl:hidden">
             {NAV.map((item) => {
               const children = item.label === "Services"
                 ? LEGS.flatMap((l) => l.services.map((s) => ({ label: s.name, href: serviceHref(s) })))
@@ -116,6 +112,11 @@ export default function Header() {
             <Link href={enquire("Free counselling")} className="mt-6 flex justify-center rounded-full bg-accent px-5 py-3.5 font-semibold text-white">
               Book free counselling
             </Link>
+            <div className="mt-6 space-y-2 text-sm text-slate-600">
+              <a href={tel(SITE.phones[0])} className="flex items-center gap-2"><Phone className="size-4 text-accent" />{SITE.phones[0]}</a>
+              <a href={`mailto:${SITE.email}`} className="flex items-center gap-2 break-all"><Mail className="size-4 text-accent" />{SITE.email}</a>
+              <SocialIcons className="pt-2 [&_a]:bg-ink/5 [&_a]:text-ink [&_a:hover]:bg-ink [&_a:hover]:text-white" />
+            </div>
           </nav>
         )}
       </div>
