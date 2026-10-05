@@ -22,59 +22,56 @@ export const tel = (phone: string) => `tel:${phone.replace(/[^+\d]/g, "")}`;
 
 export type NavItem = { label: string; href: string; children?: NavItem[] };
 
-/** Same menu as the old site (Singapore added: it had a page but no menu entry). */
+/** Study destinations, each with its nearest major airport and a typical flight time from Delhi (for the departures board). */
+export const DESTINATIONS = [
+  { slug: "canada", name: "Canada", code: "YYZ", city: "Toronto", flight: "14h 30m" },
+  { slug: "uk", name: "UK", code: "LHR", city: "London", flight: "9h 45m" },
+  { slug: "usa", name: "USA", code: "JFK", city: "New York", flight: "15h 30m" },
+  { slug: "germany", name: "Germany", code: "FRA", city: "Frankfurt", flight: "8h 40m" },
+  { slug: "france", name: "France", code: "CDG", city: "Paris", flight: "9h 15m" },
+  { slug: "ireland", name: "Ireland", code: "DUB", city: "Dublin", flight: "11h 50m" },
+  { slug: "new-zealand", name: "New Zealand", code: "AKL", city: "Auckland", flight: "16h 30m" },
+  { slug: "singapore", name: "Singapore", code: "SIN", city: "Singapore", flight: "5h 50m" },
+] as const;
+
+/**
+ * Main menu. "Services" is a mega menu built from content/services.ts in the header.
+ * Every page of the old menu stays reachable (menu, footer or the services pages).
+ */
 export const NAV: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "About Us", href: "/about-us" },
+  { label: "Services", href: "/services" },
   {
-    label: "Global Education",
+    label: "Destinations",
     href: "/study-in/canada",
-    children: [
-      { label: "Study in Canada", href: "/study-in/canada" },
-      { label: "Study in New Zealand", href: "/study-in/new-zealand" },
-      { label: "Study in USA", href: "/study-in/usa" },
-      { label: "Study in UK", href: "/study-in/uk" },
-      { label: "Study in Ireland", href: "/study-in/ireland" },
-      { label: "Study in France", href: "/study-in/france" },
-      { label: "Study in Germany", href: "/study-in/germany" },
-      { label: "Study in Singapore", href: "/study-in/singapore" },
-    ],
+    children: DESTINATIONS.map((d) => ({ label: `Study in ${d.name}`, href: `/study-in/${d.slug}` })),
   },
   {
-    label: "Services",
-    href: "/ielts-general",
+    label: "Test prep",
+    href: "/services/english-test-preparation",
     children: [
+      { label: "IELTS Academic", href: "/ielts-academy" },
       { label: "IELTS General", href: "/ielts-general" },
-      { label: "IELTS Academy", href: "/ielts-academy" },
-      { label: "PTE", href: "/pte" },
+      { label: "UKVI IELTS", href: "/ukvi-ielts" },
+      { label: "PTE Academic", href: "/pte" },
       { label: "TOEFL", href: "/toefl" },
-      { label: "UKVI-IELTS", href: "/ukvi-ielts" },
-      { label: "CELPIP", href: "/ielts-academy" },
-      { label: "OET", href: "/ielts-academy" },
-      { label: "DUOLINGO", href: "/ielts-academy" },
-      { label: "GRE", href: "/ielts-academy" },
-      { label: "GMAT", href: "/ielts-academy" },
-      { label: "Online Courses", href: "/online-courses" },
-      { label: "Visa Assistance", href: "/visa-assistance" },
+      { label: "Duolingo English Test", href: "/services/english-test-preparation#duolingo" },
+      { label: "Classroom courses", href: "/classroom-courses" },
+      { label: "Online courses", href: "/online-courses" },
     ],
   },
-  {
-    label: "IELTS Academic",
-    href: "/classroom-courses",
-    children: [
-      { label: "Classroom Courses", href: "/classroom-courses" },
-      { label: "Online Courses", href: "/online-courses" },
-    ],
-  },
-  { label: "Our Blog", href: "/blog" },
-  { label: "Contact Us", href: "/contact-us" },
+  { label: "Scholarships", href: "/services/scholarships" },
+  { label: "Success stories", href: "/success-stories" },
+  { label: "News", href: "/blog" },
+  { label: "About", href: "/about-us" },
+  { label: "Contact", href: "/contact-us" },
 ];
 
 export const FOOTER_LINKS: NavItem[] = [
-  { label: "Home", href: "/" },
   { label: "About Us", href: "/about-us" },
-  { label: "IELTS Classes", href: "/ielts-classes-india" },
-  { label: "PTE Classes", href: "/pte-classes-india" },
+  { label: "Success stories", href: "/success-stories" },
+  { label: "News & blogs", href: "/blog" },
+  { label: "IELTS Classes in India", href: "/ielts-classes-india" },
+  { label: "PTE Classes in India", href: "/pte-classes-india" },
   { label: "Contact", href: "/contact-us" },
 ];
 

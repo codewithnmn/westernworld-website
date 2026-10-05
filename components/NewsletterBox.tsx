@@ -16,14 +16,14 @@ export default function NewsletterBox() {
     router.push(`/contact-us?${new URLSearchParams({ email, course: "Newsletter / stay connected" })}#enquiry`);
   };
   return (
-    <div className="rounded-3xl bg-brand-dark p-6 text-white shadow-xl">
+    <div className="rounded-xl bg-brand-dark p-6 text-white">
       <Mail className="size-8 text-sky" />
-      <h3 className="mt-3 text-xl font-bold text-white">Stay connected with us</h3>
+      <h3 className="mt-3 text-2xl font-semibold text-white">Stay connected with us</h3>
       <p className="mt-1 text-sm text-white/70">Get updates on intakes, IELTS batches and visa news.</p>
       <form onSubmit={submit} className="mt-4 flex gap-2">
         <input name="email" type="email" required placeholder="Enter Your Email Address"
-               className="min-w-0 flex-1 rounded-xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-white/40" />
-        <button className="rounded-xl bg-accent px-4 py-3 text-sm font-bold text-white hover:bg-accent-dark">Subscribe</button>
+               className="min-w-0 flex-1 rounded-full border border-white/15 bg-white/10 px-4 py-3 text-sm text-white outline-none placeholder:text-white/50 focus:border-white/40" />
+        <button className="rounded-full bg-accent px-5 py-3 text-sm font-semibold text-white hover:bg-accent-dark">Subscribe</button>
       </form>
     </div>
   );

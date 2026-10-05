@@ -1,14 +1,24 @@
 @import "tailwindcss";
 
-/* Brand colours taken from the Western World logo and office branding: navy + red. */
+/*
+ * Western World design language: travel documents. Navy + red from the logo, on warm "paper",
+ * a mono face for ticket details, a characterful grotesque for headlines.
+ */
 @theme {
   --color-brand: #1b2b77;
-  --color-brand-dark: #111c52;
-  --color-brand-light: #e8ecfb;
+  --color-brand-dark: #0e1645;
+  --color-brand-light: #e6eaf8;
   --color-accent: #e2242f;
   --color-accent-dark: #bf1a24;
-  --color-sky: #38bdf8;
-  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --color-sky: #7cc4ff;
+  --color-sun: #ffcf4a;
+  --color-paper: #f6f3ec;
+  --color-paper-dark: #ece6da;
+  --color-line: #e2dccf;
+  --color-ink: #0f1633;
+  --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--ff-display), var(--ff-body), ui-sans-serif, sans-serif;
+  --font-mono: var(--ff-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 /* In the base layer so utilities (e.g. text-white on dark sections) win. */
@@ -18,17 +28,75 @@
   }
 
   body {
-    @apply bg-white text-slate-700 antialiased;
+    @apply bg-paper text-slate-700 antialiased;
   }
 
   h1, h2, h3, h4 {
-    @apply text-slate-900;
+    @apply font-display text-ink;
+    letter-spacing: -0.02em;
+  }
+
+  ::selection {
+    @apply bg-sun text-ink;
+  }
+
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
   }
 }
 
-/* Long-form copy carried over from the old site. */
 @layer components {
+  /* Long-form copy carried over from the old site. */
   .prose-copy p {
     @apply mb-4 leading-relaxed;
   }
+
+  /* Small mono label used for "Leg 01", "DEL → YYZ", gate numbers… */
+  .tag {
+    @apply font-mono text-[11px] font-medium tracking-[0.18em] uppercase;
+  }
+
+  /* Faint latitude/longitude grid. */
+  .map-grid {
+    background-image:
+      linear-gradient(to right, rgb(27 43 119 / 0.06) 1px, transparent 1px),
+      linear-gradient(to bottom, rgb(27 43 119 / 0.06) 1px, transparent 1px);
+    background-size: 56px 56px;
+  }
+
+  /* Decorative barcode. */
+  .barcode {
+    background-image: repeating-linear-gradient(90deg,
+      currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px,
+      currentColor 8px 11px, transparent 11px 12px, currentColor 12px 13px, transparent 13px 16px);
+  }
+}
+
+/* Motion: CSS only, never required to read the page, off for people who ask for less. */
+@keyframes plane {
+  from { left: 0; }
+  to { left: calc(100% - 1.25rem); }
+}
+
+@keyframes flap {
+  0% { transform: rotateX(90deg); opacity: 0; }
+  100% { transform: rotateX(0); opacity: 1; }
+}
+
+@keyframes marquee {
+  to { transform: translateX(-50%); }
+}
+
+.flap {
+  animation: flap 0.5s cubic-bezier(.2,.8,.2,1) both;
+  transform-origin: top;
+}
+
+.marquee {
+  animation: marquee 60s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .flap, .marquee, .fly { animation: none !important; }
 }

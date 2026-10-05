@@ -10,7 +10,7 @@ import { SITE, tel } from "@/lib/site";
 export function CityDirectory({ kind }: { kind: "ielts" | "pte" }) {
   const label = kind === "ielts" ? "IELTS" : "PTE";
   return (
-    <Section className="bg-slate-50">
+    <Section className="bg-paper-dark/50">
       <SectionTitle eyebrow="Near you" title={`${label} classes across Haryana`} center
                     intro="Students join us from all these towns, in our Rohtak classroom or online." />
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
@@ -47,13 +47,13 @@ export function IeltsCityPage({ city }: { city: City }) {
         <div className="prose-copy text-slate-600">{copy.intro.map((p) => <p key={p.slice(0, 40)}>{p}</p>)}</div>
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
           {copy.features.map(([t, d]) => (
-            <div key={t} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+            <div key={t} className="rounded-2xl border border-line bg-white p-5 shadow-sm">
               <h3 className="flex items-center gap-2 font-bold"><CheckCircle2 className="size-5 text-accent" />{t}</h3>
               <p className="mt-2 text-sm leading-relaxed text-slate-500">{d}</p>
             </div>
           ))}
         </div>
-        <div className="mt-8 rounded-3xl bg-brand-light p-6">
+        <div className="mt-8 rounded-xl bg-brand-light p-6">
           <p className="text-slate-700">{copy.closing}</p>
           <CallUs />
         </div>
@@ -74,7 +74,7 @@ export function PteContent({ city }: { city?: string }) {
       <p className="mt-2 text-slate-600">{copy.whyIntro}</p>
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {copy.reasons.map(([t, d]) => (
-          <div key={t} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+          <div key={t} className="rounded-2xl border border-line bg-white p-5 shadow-sm">
             <h3 className="flex items-center gap-2 font-bold"><CheckCircle2 className="size-5 text-accent" />{t}</h3>
             <p className="mt-2 text-sm leading-relaxed text-slate-500">{d}</p>
           </div>
@@ -84,7 +84,7 @@ export function PteContent({ city }: { city?: string }) {
       <p className="mt-2 text-slate-600">{copy.modulesIntro}</p>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         {copy.modules.map(([t, d]) => (
-          <div key={t} className="rounded-2xl bg-slate-50 p-5">
+          <div key={t} className="rounded-2xl bg-paper-dark/50 p-5">
             <h3 className="font-bold text-brand">{t}</h3>
             <p className="mt-1 text-sm text-slate-600">{d}</p>
           </div>
@@ -97,7 +97,7 @@ export function PteContent({ city }: { city?: string }) {
         {copy.benefits.map((b) => <li key={b} className="flex gap-2 text-slate-600"><CheckCircle2 className="mt-0.5 size-5 shrink-0 text-accent" />{b}</li>)}
       </ul>
       {copy.enrol && (
-        <div className="mt-8 rounded-3xl bg-brand-light p-6">
+        <div className="mt-8 rounded-xl bg-brand-light p-6">
           <h3 className="text-lg font-bold text-brand">{copy.enrol.title}</h3>
           <p className="mt-1 text-slate-700">{copy.enrol.text}</p>
           <CallUs />

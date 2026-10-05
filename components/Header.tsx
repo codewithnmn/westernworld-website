@@ -3,51 +3,67 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { ChevronDown, Mail, Menu, Phone, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ArrowUpRight, ChevronDown, Mail, Menu, Phone, X } from "lucide-react";
 import SocialIcons from "@/components/SocialIcons";
+import { LEGS, serviceHref } from "@/content/services";
 import { NAV, SITE, enquire, tel, type NavItem } from "@/lib/site";
 
 export default function Header() {
   const path = usePathname();
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
+  // Dropdowns open on hover/focus (CSS). After a click the page changes without a reload, so the pointer and focus are
+  // still on the menu: keep it closed until the pointer leaves.
+  const [closed, setClosed] = useState<string | null>(null);
   const active = (item: NavItem) =>
-    item.href === "/" ? path === "/" : path.startsWith(item.href) || !!item.children?.some((c) => path.startsWith(c.href));
+    path === item.href || (item.href !== "/" && path.startsWith(item.href)) || !!item.children?.some((c) => path === c.href);
+
+  // Lock the page behind the mobile menu while it is open.
+  useEffect(() => {
+    document.documentElement.style.overflow = open ? "hidden" : "";
+  }, [open]);
 
   return (
     <header className="sticky top-0 z-40">
-      <div className="bg-brand-dark text-xs text-white/80">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-2">
-          <p className="hidden font-medium tracking-wide sm:block">WELCOME TO {SITE.name.toUpperCase()}</p>
+      <div className="border-b border-line bg-white text-xs text-slate-600">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-1.5">
+          <p className="tag hidden text-slate-500 sm:block">Rohtak <span className="text-accent">✈</span> the world · Study abroad · Visa · Test prep</p>
           <div className="flex items-center gap-5">
-            <a href={tel(SITE.phones[0])} className="flex items-center gap-1.5 hover:text-white"><Phone className="size-3.5" />{SITE.phones[0]}</a>
-            <a href={`mailto:${SITE.email}`} className="hidden items-center gap-1.5 hover:text-white md:flex"><Mail className="size-3.5" />{SITE.email}</a>
-            <SocialIcons className="[&_a]:size-6 [&_svg]:size-3" />
+            <a href={tel(SITE.phones[0])} className="flex items-center gap-1.5 font-medium text-ink hover:text-accent"><Phone className="size-3.5" />{SITE.phones[0]}</a>
+            <a href={`mailto:${SITE.email}`} className="hidden items-center gap-1.5 hover:text-accent md:flex"><Mail className="size-3.5" />{SITE.email}</a>
+            <SocialIcons className="[&_a]:size-6 [&_a]:bg-ink/5 [&_a]:text-ink [&_a:hover]:bg-ink [&_a:hover]:text-white [&_svg]:size-3" />
           </div>
         </div>
       </div>
 
-      <div className="border-b border-slate-100 bg-white/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
-          <Link href="/" onClick={() => setOpen(false)} className="shrink-0">
-            <Image src="/images/logo.png" alt={SITE.legalName} width={200} height={40} priority className="h-10 w-auto" />
+      <div className="border-b border-line bg-paper/90 backdrop-blur-md">
+        <div className="relative mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3">
+          <Link href="/" className="shrink-0">
+            <Image src="/images/logo.png" alt={SITE.legalName} width={200} height={40} priority className="h-9 w-auto" />
           </Link>
 
-          <nav className="hidden items-center gap-0.5 lg:flex">
+          <nav aria-label="Main" className="hidden items-center xl:flex">
             {NAV.map((item) => (
-              <div key={item.label} className="group relative">
+              <div key={item.label} className={`group ${item.label === "Services" ? "" : "relative"}`}
+                   data-closed={closed === item.label || undefined}
+                   onMouseLeave={() => setClosed(null)}
+                   onClick={(e) => {
+                     if (!(e.target as HTMLElement).closest("a")) return;
+                     (document.activeElement as HTMLElement | null)?.blur();
+                     setClosed(item.label);
+                   }}>
                 <Link href={item.href}
-                      className={`flex items-center gap-1 rounded-lg px-2.5 py-2 text-sm font-semibold transition hover:text-accent ${active(item) ? "text-accent" : "text-slate-700"}`}>
+                      className={`relative flex items-center gap-1 px-3 py-2 text-[15px] font-medium whitespace-nowrap transition hover:text-accent ${active(item) ? "text-accent" : "text-ink"}`}>
                   {item.label}
-                  {item.children && <ChevronDown className="size-3.5 transition group-hover:rotate-180" />}
+                  {(item.children || item.label === "Services") && <ChevronDown className="size-3.5 opacity-60 transition group-hover:rotate-180 group-data-closed:rotate-0" />}
                 </Link>
-                {item.children && (
-                  <div className="invisible absolute top-full left-0 z-50 pt-2 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
-                    <ul className="w-60 rounded-2xl border border-slate-100 bg-white p-2 shadow-xl">
+                {item.label === "Services" ? <ServicesMenu /> : item.children && (
+                  <div className="invisible absolute top-full left-0 z-50 pt-3 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 group-data-closed:invisible! group-data-closed:opacity-0!">
+                    <ul className="w-64 rounded-lg border border-line bg-white p-1.5 shadow-2xl shadow-brand-dark/10">
                       {item.children.map((c) => (
                         <li key={c.label}>
-                          <Link href={c.href} className="block rounded-lg px-3 py-2 text-sm text-slate-700 hover:bg-brand-light hover:text-brand">{c.label}</Link>
+                          <Link href={c.href} className="block rounded-md px-3 py-2 text-sm text-slate-700 hover:bg-paper hover:text-brand">{c.label}</Link>
                         </li>
                       ))}
                     </ul>
@@ -58,41 +74,87 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center gap-2">
-            <Link href={enquire()} className="hidden rounded-xl bg-accent px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-accent/20 transition hover:bg-accent-dark sm:inline-block">
-              Free counselling
+            <Link href={enquire("Free counselling")}
+                  className="hidden items-center gap-1.5 rounded-full bg-ink px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-accent sm:inline-flex">
+              Free counselling <ArrowUpRight className="size-4" />
             </Link>
-            <button className="rounded-lg p-2 text-slate-700 lg:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
+            <button className="rounded-md p-2 text-ink xl:hidden" onClick={() => setOpen(!open)} aria-label="Menu" aria-expanded={open}>
               {open ? <X /> : <Menu />}
             </button>
           </div>
         </div>
 
         {open && (
-          <nav className="max-h-[75vh] overflow-y-auto border-t border-slate-100 px-4 pb-4 lg:hidden">
-            {NAV.map((item) => (
-              <div key={item.label} className="border-b border-slate-100 last:border-0">
-                <div className="flex items-center justify-between">
-                  <Link href={item.href} onClick={() => setOpen(false)} className="py-3 text-sm font-semibold text-slate-800">{item.label}</Link>
-                  {item.children && (
-                    <button className="p-2" aria-label={`Show ${item.label}`} onClick={() => setExpanded(expanded === item.label ? null : item.label)}>
-                      <ChevronDown className={`size-4 transition ${expanded === item.label ? "rotate-180" : ""}`} />
-                    </button>
+          <nav aria-label="Mobile" onClick={(e) => (e.target as HTMLElement).closest("a") && setOpen(false)} className="h-[calc(100dvh-7rem)] overflow-y-auto border-t border-line bg-paper px-4 pb-24 xl:hidden">
+            {NAV.map((item) => {
+              const children = item.label === "Services"
+                ? LEGS.flatMap((l) => l.services.map((s) => ({ label: s.name, href: serviceHref(s) })))
+                : item.children;
+              return (
+                <div key={item.label} className="border-b border-line">
+                  <div className="flex items-center justify-between">
+                    <Link href={item.href} className="py-3.5 font-display text-lg font-semibold text-ink">{item.label}</Link>
+                    {children && (
+                      <button className="p-2" aria-label={`Show ${item.label}`} aria-expanded={expanded === item.label}
+                              onClick={() => setExpanded(expanded === item.label ? null : item.label)}>
+                        <ChevronDown className={`size-5 transition ${expanded === item.label ? "rotate-180" : ""}`} />
+                      </button>
+                    )}
+                  </div>
+                  {children && expanded === item.label && (
+                    <ul className="mb-3 grid grid-cols-2 gap-1.5">
+                      {children.map((c) => (
+                        <li key={c.label}>
+                          <Link href={c.href} className="block h-full rounded-md bg-white px-3 py-2.5 text-sm text-slate-700">{c.label}</Link>
+                        </li>
+                      ))}
+                    </ul>
                   )}
                 </div>
-                {item.children && expanded === item.label && (
-                  <ul className="mb-2 grid grid-cols-2 gap-1">
-                    {item.children.map((c) => (
-                      <li key={c.label}>
-                        <Link href={c.href} onClick={() => setOpen(false)} className="block rounded-lg bg-slate-50 px-3 py-2 text-xs text-slate-700">{c.label}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
+              );
+            })}
+            <Link href={enquire("Free counselling")} className="mt-6 flex justify-center rounded-full bg-accent px-5 py-3.5 font-semibold text-white">
+              Book free counselling
+            </Link>
           </nav>
         )}
       </div>
     </header>
+  );
+}
+
+/** Every service, grouped by journey leg. */
+function ServicesMenu() {
+  return (
+    <div className="invisible absolute inset-x-0 top-full z-50 pt-1 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100 group-data-closed:invisible! group-data-closed:opacity-0!">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="overflow-hidden rounded-xl border border-line bg-white shadow-2xl shadow-brand-dark/15">
+          <div className="grid grid-cols-4 gap-px bg-line">
+            {LEGS.map((leg) => (
+              <div key={leg.id} className="bg-white p-5">
+                <p className="tag text-accent">{leg.label}</p>
+                <p className="mt-1 font-display text-xl font-semibold text-ink">{leg.title}</p>
+                <ul className="mt-3 space-y-0.5">
+                  {leg.services.map((s) => (
+                    <li key={s.slug}>
+                      <Link href={serviceHref(s)} className="group/item -mx-2 block rounded-md px-2 py-1.5 hover:bg-paper">
+                        <span className="text-sm font-semibold text-ink group-hover/item:text-accent">{s.name}</span>
+                        <span className="block text-xs leading-snug text-slate-500">{s.short}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="flex items-center justify-between border-t border-line bg-paper px-5 py-3">
+            <p className="text-sm text-slate-600">Not sure what you need? Counselling is free.</p>
+            <Link href="/services" className="tag inline-flex items-center gap-1 text-ink hover:text-accent">
+              All services <ArrowUpRight className="size-3" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

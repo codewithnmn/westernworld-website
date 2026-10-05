@@ -57,19 +57,19 @@ export default function EnquiryForm({
     }
   };
 
-  const input = `w-full rounded-xl border px-4 py-3 text-sm outline-none transition focus:ring-4 ${
+  const input = `w-full rounded-md border px-3.5 py-3 text-sm outline-none transition focus:ring-4 ${
     dark
       ? "border-white/15 bg-white/10 text-white placeholder:text-white/50 focus:border-white/40 focus:ring-white/10"
-      : "border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-brand focus:ring-brand/10"
+      : "border-line bg-white text-ink placeholder:text-slate-400 focus:border-ink focus:ring-ink/5"
   }`;
-  const label = `mb-1.5 block text-xs font-semibold ${dark ? "text-white/80" : "text-slate-600"}`;
+  const label = `tag mb-1.5 block ${dark ? "text-white/60" : "text-slate-500"}`;
   const has = (x: Field) => fields.includes(x);
 
   return (
     <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
       {title && (
         <div className="sm:col-span-2">
-          <h3 className={`text-xl font-bold ${dark ? "text-white" : "text-slate-900"}`}>{title}</h3>
+          <h3 className={`text-2xl font-semibold ${dark ? "text-white" : "text-ink"}`}>{title}</h3>
           {subtitle && <p className={`mt-1 text-sm ${dark ? "text-white/70" : "text-slate-500"}`}>{subtitle}</p>}
         </div>
       )}
@@ -104,7 +104,7 @@ export default function EnquiryForm({
       <Turnstile key={attempt} className="sm:col-span-2" />
       {error && <p className="text-sm font-medium text-red-500 sm:col-span-2" role="alert">{error}</p>}
       <button type="submit" disabled={busy}
-              className="inline-flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-accent/25 transition hover:bg-accent-dark disabled:opacity-60 sm:col-span-2">
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-semibold text-white transition hover:bg-accent-dark disabled:opacity-60 sm:col-span-2">
         <Send className="size-4" /> {busy ? "Sending…" : submitLabel}
       </button>
       <p className={`text-xs sm:col-span-2 ${dark ? "text-white/60" : "text-slate-400"}`}>

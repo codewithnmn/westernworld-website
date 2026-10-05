@@ -13,7 +13,7 @@ const csp = [
   "img-src 'self' data: blob:",
   "font-src 'self' data:",
   `connect-src 'self'${dev ? " ws:" : ""}`,
-  "frame-src https://challenges.cloudflare.com https://www.google.com",
+  "frame-src https://challenges.cloudflare.com https://www.google.com https://www.youtube-nocookie.com",
   "frame-ancestors 'none'",
   "base-uri 'self'",
   "form-action 'self'",
@@ -46,6 +46,11 @@ const PAGES = [
 ];
 
 const nextConfig: NextConfig = {
+  images: {
+    formats: ["image/avif", "image/webp"],
+    // Video-story thumbnails (optimised through this site, so the CSP keeps img-src 'self').
+    remotePatterns: [{ protocol: "https", hostname: "i.ytimg.com", pathname: "/vi/**" }],
+  },
   /**
    * Only the CRM's public enquiry endpoints are reachable through this site; the staff API, dev login and everything
    * else stay off the public website's domain.
@@ -69,6 +74,7 @@ const nextConfig: NextConfig = {
       ...PAGES.map((p) => ({ source: `/${p}.php`, destination: `/${p}`, permanent: true })),
       ...Object.entries(COUNTRY_PAGES).map(([p, slug]) => ({ source: `/${p}.php`, destination: `/study-in/${slug}`, permanent: true })),
       { source: "/german-language-training.php", destination: "/online-courses", permanent: true },
+      { source: "/services/visa-filing", destination: "/visa-assistance", permanent: true },
       ...cities.ielts.map((c) => ({ source: `/delhi/${c.slug}`, destination: `/ielts-classes/${c.slug}`, permanent: true })),
       ...cities.pte.map((c) => ({ source: `/pte/${c.slug}`, destination: `/pte-classes/${c.slug}`, permanent: true })),
     ];

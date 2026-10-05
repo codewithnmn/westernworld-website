@@ -33,7 +33,7 @@ export default async function CountryPage({ params }: PageProps<"/study-in/[coun
         <Section>
           <div className="grid gap-6 md:grid-cols-2">
             {unis.map((u) => (
-              <article key={u.uid} className="group flex flex-col overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-sm transition hover:shadow-xl sm:flex-row">
+              <article key={u.uid} className="group flex flex-col overflow-hidden rounded-xl border border-line bg-white shadow-sm transition hover:shadow-xl sm:flex-row">
                 <UniImage src={u.cardImage ?? u.image} alt={u.name} className="h-48 shrink-0 sm:h-auto sm:w-56" sizes="(min-width: 640px) 224px, 100vw" />
                 <div className="flex flex-1 flex-col p-6">
                   <h2 className="text-lg font-bold"><Link href={`/universities/${u.uid}`} className="hover:text-brand">{u.cardTitle ?? u.name}</Link></h2>
@@ -52,7 +52,7 @@ export default async function CountryPage({ params }: PageProps<"/study-in/[coun
         </Section>
       ) : (
         <Section>
-          <div className="mx-auto max-w-2xl rounded-3xl bg-white p-8 shadow-xl ring-1 ring-slate-100">
+          <div className="mx-auto max-w-2xl rounded-xl bg-white p-8 shadow-xl ring-1 ring-slate-100">
             <EnquiryForm title={`Talk to us about studying in ${c.name}`} source={`Study in ${c.name}`} country={c.name}
                          fields={["name", "email", "mobile", "message"]} defaults={{ message: `I would like to study in ${c.name}.` }} />
           </div>

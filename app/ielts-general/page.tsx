@@ -14,7 +14,7 @@ export default function IeltsGeneralPage() {
     <>
       <PageHero title="IELTS General" crumbs={[{ label: "Services" }, { label: "IELTS General" }]} image="/images/slide1.jpg"
                 subtitle="Online and classroom coaching for the IELTS General Training test." />
-      <Section className="bg-slate-50">
+      <Section className="bg-paper-dark/50">
         <SectionTitle eyebrow="Packages" title="IELTS General Packages" center />
         <Packages packages={IELTS_GENERAL_PACKAGES} source="IELTS General packages" />
       </Section>

@@ -14,7 +14,7 @@ export default function IeltsAcademyPage() {
     <>
       <PageHero title="IELTS Academy" crumbs={[{ label: "Services" }, { label: "IELTS Academy" }]} image="/images/slide2.jpg"
                 subtitle="IELTS Academic coaching, plus preparation for CELPIP, OET, Duolingo, GRE and GMAT." />
-      <Section className="bg-slate-50">
+      <Section className="bg-paper-dark/50">
         <SectionTitle eyebrow="Packages" title="IELTS Academy Packages" center />
         <Packages packages={IELTS_ACADEMY_PACKAGES} source="IELTS Academy packages" />
         <div className="mt-10 flex flex-wrap justify-center gap-3">

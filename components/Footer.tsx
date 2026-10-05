@@ -1,56 +1,83 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, MapPin, Phone } from "lucide-react";
+import { ArrowUpRight, Mail, MapPin, Phone } from "lucide-react";
 import SocialIcons from "@/components/SocialIcons";
-import { FOOTER_LINKS, NAV, SITE, tel } from "@/lib/site";
+import { LEGS, serviceHref } from "@/content/services";
+import { DESTINATIONS, FOOTER_LINKS, NAV, SITE, enquire, tel } from "@/lib/site";
 
 export default function Footer() {
-  const destinations = NAV.find((n) => n.label === "Global Education")?.children ?? [];
+  const tests = NAV.find((n) => n.label === "Test prep")?.children ?? [];
+  const col = "mb-4 tag text-white/45";
+  const link = "text-sm text-white/75 transition hover:text-white";
   return (
-    <footer className="bg-brand-dark text-white/75">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 md:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-4">
-          <div className="inline-block rounded-xl bg-white p-3">
-            <Image src="/images/logo.png" alt={SITE.legalName} width={200} height={40} className="h-9 w-auto" />
+    <footer className="relative overflow-hidden bg-brand-dark text-white/75">
+      <div className="map-grid absolute inset-0 opacity-40 [filter:invert(1)]" aria-hidden />
+      <div className="relative mx-auto max-w-7xl px-4">
+        <div className="flex flex-col items-start justify-between gap-6 border-b border-white/10 py-14 md:flex-row md:items-end">
+          <p className="max-w-3xl font-display text-4xl leading-[1.05] font-semibold text-white sm:text-6xl">
+            Your seat abroad is waiting. <span className="text-sky">Let&rsquo;s book it.</span>
+          </p>
+          <Link href={enquire("Free counselling")}
+                className="inline-flex shrink-0 items-center gap-2 rounded-full bg-accent px-6 py-3.5 font-semibold text-white transition hover:bg-white hover:text-accent">
+            Book free counselling <ArrowUpRight className="size-5" />
+          </Link>
+        </div>
+
+        <div className="grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-[1.3fr_1fr_1fr_1fr]">
+          <div className="space-y-5">
+            <div className="inline-block rounded-md bg-white px-3 py-2">
+              <Image src="/images/logo.png" alt={SITE.legalName} width={200} height={40} className="h-8 w-auto" />
+            </div>
+            <p className="max-w-xs text-sm leading-relaxed">{SITE.footerAbout}</p>
+            <ul className="space-y-2.5 text-sm">
+              <li className="flex gap-3"><MapPin className="mt-0.5 size-4 shrink-0 text-accent" />{SITE.address}</li>
+              {SITE.phones.map((p) => (
+                <li key={p}><a href={tel(p)} className="flex gap-3 hover:text-white"><Phone className="size-4 shrink-0 text-accent" />{p}</a></li>
+              ))}
+              <li><a href={`mailto:${SITE.email}`} className="flex gap-3 break-all hover:text-white"><Mail className="size-4 shrink-0 text-accent" />{SITE.email}</a></li>
+            </ul>
+            <SocialIcons />
           </div>
-          <p className="text-sm leading-relaxed">{SITE.footerAbout}</p>
-          <SocialIcons />
-        </div>
 
-        <div>
-          <h4 className="mb-4 text-sm font-bold tracking-wider text-white uppercase">Other links</h4>
-          <ul className="space-y-2 text-sm">
-            {FOOTER_LINKS.map((l) => <li key={l.label}><Link href={l.href} className="hover:text-white">{l.label}</Link></li>)}
-          </ul>
-          <h4 className="mt-6 mb-3 text-sm font-bold tracking-wider text-white uppercase">Immigration services</h4>
-          <ul className="space-y-2 text-sm">
-            <li><Link href="/visa-assistance" className="hover:text-white">Visa Assistance</Link></li>
-            <li><a href={SITE.webmail} target="_blank" rel="noopener noreferrer" className="hover:text-white">Webmail Login</a></li>
-          </ul>
-        </div>
+          <div>
+            <h4 className={col}>Services</h4>
+            <ul className="space-y-2">
+              {LEGS.flatMap((l) => l.services).map((s) => <li key={s.slug}><Link href={serviceHref(s)} className={link}>{s.name}</Link></li>)}
+            </ul>
+          </div>
 
-        <div>
-          <h4 className="mb-4 text-sm font-bold tracking-wider text-white uppercase">Study destinations</h4>
-          <ul className="space-y-2 text-sm">
-            {destinations.map((l) => <li key={l.label}><Link href={l.href} className="hover:text-white">{l.label}</Link></li>)}
-          </ul>
-        </div>
+          <div>
+            <h4 className={col}>Destinations</h4>
+            <ul className="space-y-2">
+              {DESTINATIONS.map((d) => (
+                <li key={d.slug}>
+                  <Link href={`/study-in/${d.slug}`} className={`${link} flex items-baseline gap-2`}>
+                    <span className="font-mono text-[11px] text-sky">{d.code}</span> Study in {d.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <h4 className={`${col} mt-8`}>Test prep</h4>
+            <ul className="space-y-2">
+              {tests.map((t) => <li key={t.label}><Link href={t.href} className={link}>{t.label}</Link></li>)}
+            </ul>
+          </div>
 
-        <div>
-          <h4 className="mb-4 text-sm font-bold tracking-wider text-white uppercase">Address</h4>
-          <ul className="space-y-3 text-sm">
-            <li className="flex gap-3"><MapPin className="mt-0.5 size-4 shrink-0 text-accent" />{SITE.address}</li>
-            {SITE.phones.map((p) => (
-              <li key={p}><a href={tel(p)} className="flex gap-3 hover:text-white"><Phone className="size-4 shrink-0 text-accent" />{p}</a></li>
-            ))}
-            <li><a href={`mailto:${SITE.email}`} className="flex gap-3 break-all hover:text-white"><Mail className="size-4 shrink-0 text-accent" />{SITE.email}</a></li>
-          </ul>
+          <div>
+            <h4 className={col}>Company</h4>
+            <ul className="space-y-2">
+              {FOOTER_LINKS.map((l) => <li key={l.label}><Link href={l.href} className={link}>{l.label}</Link></li>)}
+              <li><Link href="/visa-assistance" className={link}>Visa Assistance</Link></li>
+              <li><a href={SITE.webmail} target="_blank" rel="noopener noreferrer" className={link}>Webmail Login</a></li>
+            </ul>
+          </div>
         </div>
       </div>
-      <div className="border-t border-white/10">
-        <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-white/50">
-          © {new Date().getFullYear()} {SITE.legalName}. All Rights Reserved.
-        </p>
+      <div className="relative border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-wrap justify-between gap-2 px-4 py-5 text-xs text-white/45">
+          <p>© {new Date().getFullYear()} {SITE.legalName} All Rights Reserved.</p>
+          <p className="tag">DEL · ROH → YYZ · LHR · JFK · FRA · CDG · DUB · AKL · SIN</p>
+        </div>
       </div>
     </footer>
   );

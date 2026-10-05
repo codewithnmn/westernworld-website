@@ -28,7 +28,7 @@ export default function VisaAssistancePage() {
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {countries.map((c) => (
             <Link key={c.slug} href={`/study-in/${c.slug}`}
-                  className="flex items-center gap-2 rounded-2xl border border-slate-100 p-3 text-sm font-semibold hover:border-brand hover:text-brand">
+                  className="flex items-center gap-2 rounded-2xl border border-line p-3 text-sm font-semibold hover:border-brand hover:text-brand">
               <Globe2 className="size-4 text-accent" /> {c.name}
             </Link>
           ))}
