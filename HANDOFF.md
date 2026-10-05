@@ -8,10 +8,10 @@ Read `README.md` first (CRM connection, where content lives, git flow). CRM-side
 | # | Task | Status |
 |---|---|---|
 | W1 | Rebuild of the old PHP site: all content + old URLs, every form → CRM public intake (tenant `westernworld`) | done (on `main`) |
-| W2 | Redesign: design system, boarding-pass form, 14 services, success stories + video slots, departures board, announcement bar, News & blogs | done on `develop` (copy needs owner review) |
+| W2 | Redesign: design system, boarding-pass form, 14 services, success stories + video slots, departures board, announcement bar, News & blogs | done (on `main`) |
 | MOVE1 | Moved out of softzenith-crm (`sites/westernworld`) into this repo, history kept | done |
-| W3 | Blue & white theme; student photos / testimonials moved up and highlighted on the home page | done, uncommitted (owner review) |
-| W4 | New SVG logo; owner's service names; live-site wording on home (welcome, why us, achievements, coaching); footer © 2021 | done, uncommitted (owner review) |
+| W3 | Blue & white theme; student photos / testimonials moved up and highlighted on the home page | done (on `main`, c1f260e) |
+| W4 | New SVG logo; owner's service names; live-site wording on home (welcome, why us, achievements, coaching); footer © 2021 | done (on `main`, c1f260e) |
 | next | Owner copy review → merge `develop` → `main`; hosting + domain + env (`CRM_API_URL`, `NEXT_PUBLIC_CRM_TENANT`, Turnstile key) | todo |
 | later | Announcement / posts from the CRM (tenant settings) so staff update them without a deploy | idea |
 
